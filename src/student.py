@@ -8,7 +8,6 @@ class Student:
         self.name = name
         self.username = username
         self.password = password
-        self.courses = []
 
     def execute(self, query, placehold_var):
         try:
@@ -47,7 +46,6 @@ class Student:
         course_details = cursor.fetchall()
         cursor.close()
         connection.close()  
-
         return course_details
     
     def enroll_new_courses(self):
@@ -156,7 +154,6 @@ class Student_GUI:
         connection.commit()
         cursor.close()
         connection.close()  
-
         return insert_details        
 
     def return_homepage(self):
@@ -169,7 +166,6 @@ class Student_GUI:
                                 password=self.password_entry.get())
         if self.student_input.check_credentials():
             self.show_report()
-
         else:
             messagebox.showerror('Error', 'Invalid login credentials. Please try again.')
 
