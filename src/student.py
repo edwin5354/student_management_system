@@ -50,10 +50,15 @@ class Student:
 
         return course_details
     
-    def enrol_new_courses(self):
-        pass
+    def enroll_new_courses(self):
+        query = '''SELECT DISTINCT course_name FROM student_grades WHERE course_name NOT IN 
+            (SELECT course_name FROM student_grades WHERE student_name = %s) AND course_name IN 
+            (SELECT course_name FROM student_grades WHERE student_name != %s)'''
+        
+        placehold_var = (self.name, self.name)
+        return self.execute(query, placehold_var)
 
-    
+
 class Student_GUI:
     def __init__(self):
         self.homepage()
@@ -106,6 +111,53 @@ class Student_GUI:
 
         tk.Label(self.report_window, text=f'Welcome! Here is your Scorecard.\n').pack()
         self.return_button = tk.Button(self.report_window, text='return', command=self.return_homepage).pack()
+
+        tk.Label(self.report_window, text= '\nWant to enroll a new course? Click Here.\n').place(x=125,y=230)
+        tk.Button(self.report_window, text='Register', command= self.register_page).place(x=350, y=240)
+
+    def register_page(self):
+        self.report_window.destroy()
+        self.register_window = tk.Tk()
+        self.register_window.geometry('700x300+400+200')
+        self.register_window.title('Student Management System')
+        tk.Label(self.register_window, text='Here are the available courses that you may enroll.\n').pack()
+        course_availability = self.student_input.enroll_new_courses()
+        course_availability_list = [name for sublist in course_availability for name in sublist]
+        self.enrolled_course = tk.StringVar()
+        self.course_box = ttk.Combobox(self.register_window, textvariable= self.enrolled_course, value= course_availability_list)
+        self.course_box.bind('<<ComboboxSelected>>', self.store_enrolled_course)
+        self.course_box.pack()
+
+    def store_enrolled_course(self, event):
+        self.selected_course = self.course_box.get()
+        tk.Label(self.register_window, text='\nCourse enrolled! Please Log in again to see your updated scorecard details.\n').pack()
+        tk.Label(self.register_window, text='A teacher will grade your assignments once you enroll in the course.').pack()
+        self.add_course()
+    
+    def get_code(self):
+        connection = connect_to_db()
+        cursor = connection.cursor()
+        cursor.execute('''
+        SELECT course_code FROM student_grades WHERE course_name = %s;
+        ''', (self.selected_course,))
+        update_details = cursor.fetchall()
+        cursor.close()
+        connection.close()  
+        return [code for code in update_details[0]][0]
+    
+    def add_course(self):
+        connection = connect_to_db()
+        cursor = connection.cursor()
+        cursor.execute('''
+        INSERT INTO student_grades (student_name, course_code, course_name)
+        VALUES (%s, %s, %s);
+        ''', (self.student_input.name, self.get_code() ,self.selected_course))
+        insert_details = cursor.fetchall()
+        connection.commit()
+        cursor.close()
+        connection.close()  
+
+        return insert_details        
 
     def return_homepage(self):
         if self.report_window:
