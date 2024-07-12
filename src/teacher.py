@@ -27,7 +27,6 @@ class TeacherInterface:
         WHERE teacher_name = %s AND teacher_password = %s;
         '''
         placehold_var = (self.teacher, self.password)
-
         return self.execute(query, placehold_var)
     
     def credentials(self):
@@ -42,7 +41,6 @@ class TeacherInterface:
         student = self.execute(query, None)
         self.students.append(student)
         self.student_list = ' '.join([name[0] for sublist in self.students for name in sublist])
-
         return self.student_list
     
 
@@ -59,7 +57,6 @@ class Teacher_GUI():
         if self.course_input.credentials():
                 self.teacher_name = self.teacher_entry.get()
                 self.marking_interface()
-
         else:
             messagebox.showerror('Error', 'Invalid login credentials. Please try again.')
 
@@ -104,11 +101,9 @@ class Teacher_GUI():
         WHERE student_name = %s;
         '''
         placehold_var = (self.selected_student.get(),)
-
         all_courses = self.course_input.execute(query, placehold_var)
         for course in all_courses:
             course_list.append(course[0])
-
         return course_list
 
     def subject_page(self, event):
@@ -137,7 +132,6 @@ class Teacher_GUI():
 
             for key, value in my_dict.items():
                 tk.Label(self.score_interface, text=f"{key}: {value}").pack()
-
         else:
             messagebox.showerror('Error', 'Invalid Score. Please enter a number between 0 and 100.')
 
@@ -161,17 +155,13 @@ class Teacher_GUI():
         try:
             connection = connect_to_db()
             cursor = connection.cursor()
-
             update_query = '''UPDATE student_grades SET course_teacher = %s, score = %s, grade = %s
             WHERE course_name = %s AND student_name = %s;'''
-
             grade = self.insert_grades(score)
             placehold_var = (self.teacher_name, score, grade, self.course_name, self.student_name)
-        
             # Update the row
             cursor.execute(update_query, placehold_var)
             connection.commit()
-
             select_query = '''SELECT * FROM student_grades WHERE course_name = %s AND student_name = %s;'''
 
             # Fetch and display the updated records
@@ -179,7 +169,6 @@ class Teacher_GUI():
             updated_records = cursor.fetchall()
             cursor.close()
             connection.close()
-
             return updated_records
         
         except Exception as e:
