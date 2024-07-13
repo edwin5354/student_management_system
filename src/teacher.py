@@ -18,7 +18,6 @@ class TeacherInterface:
             cursor.close()
             connection.close()
             return var_result
-        
         except Exception as e:
             return None
     
@@ -40,7 +39,7 @@ class TeacherInterface:
         query = ''' SELECT student_name FROM student_details;'''        
         student = self.execute(query, None)
         self.students.append(student)
-        self.student_list = ' '.join([name[0] for sublist in self.students for name in sublist])
+        self.student_list = [name[0] for sublist in self.students for name in sublist]
         return self.student_list
     
 
