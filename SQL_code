@@ -1,0 +1,63 @@
+# ---------------------------------------------------------------------------------------
+-- Create a database for storing the tables
+CREATE DATABASE student_grade;
+USE student_grade;
+
+# ---------------------------------------------------------------------------------------
+-- Create a table taking the login details of each student
+CREATE TABLE student_details 
+(
+student_id INT,
+student_name VARCHAR(50),
+username VARCHAR(50),
+student_password INT,
+PRIMARY KEY (student_name)
+);
+
+-- Add data to the table student_details
+INSERT INTO student_details VALUES (123, 'Edwin', 'BarkMing', 5354);
+INSERT INTO student_details VALUES (456, 'Anthony', 'Allah', 9413);
+INSERT INTO student_details VALUES (789, 'John', 'Doe', 2006);
+
+# ---------------------------------------------------------------------------------------
+-- Create a table for assigning the scores and 
+-- grades to all students enrolled in their courses.
+CREATE TABLE student_grades
+(
+student_name VARCHAR(50),
+course_code INT,
+course_name VARCHAR(50),
+course_teacher VARCHAR(10),
+score INT,
+grade VARCHAR(2),
+FOREIGN KEY (student_name) REFERENCES student_details (student_name)
+);
+
+-- Add data to the student grades table
+INSERT INTO student_grades (student_name, course_code, course_name)
+VALUES ('Edwin', 203, 'Introduction to Data Science');
+
+INSERT INTO student_grades (student_name, course_code, course_name)
+VALUES ('Edwin', 398, 'NLP & Sentiment Analysis');
+
+INSERT INTO student_grades (student_name, course_code, course_name)
+VALUES ('John', 123, "Machine Learning Fundamentals");
+
+INSERT INTO student_grades (student_name, course_code, course_name)
+VALUES('Anthony', 001, 'Python Fundamentals');
+
+INSERT INTO student_grades (student_name, course_code, course_name)
+VALUES('John', 203, 'Introduction to Data Science');
+
+# ---------------------------------------------------------------------------------------
+-- Create a table taking the login details of the teachers 
+CREATE TABLE teacher_details 
+(
+teacher_name VARCHAR(10),
+teacher_password INT,
+PRIMARY KEY (teacher_name)
+);
+
+INSERT INTO teacher_details VALUES ('Avi', 1234);
+INSERT INTO teacher_details VALUES ('Sifat', 5678);
+# ---------------------------------------------------------------------------------------
